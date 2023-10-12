@@ -92,3 +92,53 @@ swm_df =
     runtime = runtime_vec)
 ```
 
+## Using an API
+dataset for annual water consumption in NYC
+
+https://data.cityofnewyork.us/Environment/Water-Consumption-in-the-City-of-New-York/ia2d-e54m
+
+```{r}
+nyc_water = 
+  GET("https://data.cityofnewyork.us/resource/ia2d-e54m.csv") |> 
+  content("parsed")
+
+nyc_water
+```
+We can also import this dataset as a JSON file. This takes a bit more work (and this is, really, a pretty easy case), but it’s still doable.
+```{r}
+nyc_water = 
+  GET("https://data.cityofnewyork.us/resource/ia2d-e54m.json") |> 
+  content("text") |>
+  jsonlite::fromJSON() |>
+  as_tibble()
+
+nyc_water
+```
+
+data coming from BRFSS
+
+https://chronicdata.cdc.gov/Behavioral-Risk-Factors/Behavioral-Risk-Factors-Selected-Metropolitan-Area/acme-vg9e
+
+```{r}
+brfss_smart2010 = 
+  GET("https://chronicdata.cdc.gov/resource/acme-vg9e.csv",
+      query = list("$limit" = 5000)) |> 
+  content("parsed")
+
+brfss_smart2010
+```
+
+Pokemon API
+
+https://pokeapi.co/
+
+```{r}
+poke = 
+  GET("http://pokeapi.co/api/v2/pokemon/1") |>
+  content()
+
+poke$name
+poke$height
+poke$abilities
+```
+

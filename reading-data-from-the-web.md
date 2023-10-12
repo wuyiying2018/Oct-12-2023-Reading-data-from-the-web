@@ -481,3 +481,174 @@ swm_df =
     rev = gross_rev_vec,
     runtime = runtime_vec)
 ```
+
+## Using an API
+
+dataset for annual water consumption in NYC
+
+<https://data.cityofnewyork.us/Environment/Water-Consumption-in-the-City-of-New-York/ia2d-e54m>
+
+``` r
+nyc_water = 
+  GET("https://data.cityofnewyork.us/resource/ia2d-e54m.csv") |> 
+  content("parsed")
+```
+
+    ## Rows: 44 Columns: 4
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## dbl (4): year, new_york_city_population, nyc_consumption_million_gallons_per...
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+nyc_water
+```
+
+    ## # A tibble: 44 × 4
+    ##     year new_york_city_population nyc_consumption_milli…¹ per_capita_gallons_p…²
+    ##    <dbl>                    <dbl>                   <dbl>                  <dbl>
+    ##  1  1979                  7102100                    1512                    213
+    ##  2  1980                  7071639                    1506                    213
+    ##  3  1981                  7089241                    1309                    185
+    ##  4  1982                  7109105                    1382                    194
+    ##  5  1983                  7181224                    1424                    198
+    ##  6  1984                  7234514                    1465                    203
+    ##  7  1985                  7274054                    1326                    182
+    ##  8  1986                  7319246                    1351                    185
+    ##  9  1987                  7342476                    1447                    197
+    ## 10  1988                  7353719                    1484                    202
+    ## # ℹ 34 more rows
+    ## # ℹ abbreviated names: ¹​nyc_consumption_million_gallons_per_day,
+    ## #   ²​per_capita_gallons_per_person_per_day
+
+We can also import this dataset as a JSON file. This takes a bit more
+work (and this is, really, a pretty easy case), but it’s still doable.
+
+``` r
+nyc_water = 
+  GET("https://data.cityofnewyork.us/resource/ia2d-e54m.json") |> 
+  content("text") |>
+  jsonlite::fromJSON() |>
+  as_tibble()
+
+nyc_water
+```
+
+    ## # A tibble: 44 × 4
+    ##    year  new_york_city_population nyc_consumption_milli…¹ per_capita_gallons_p…²
+    ##    <chr> <chr>                    <chr>                   <chr>                 
+    ##  1 1979  7102100                  1512                    213                   
+    ##  2 1980  7071639                  1506                    213                   
+    ##  3 1981  7089241                  1309                    185                   
+    ##  4 1982  7109105                  1382                    194                   
+    ##  5 1983  7181224                  1424                    198                   
+    ##  6 1984  7234514                  1465                    203                   
+    ##  7 1985  7274054                  1326                    182                   
+    ##  8 1986  7319246                  1351                    185                   
+    ##  9 1987  7342476                  1447                    197                   
+    ## 10 1988  7353719                  1484                    202                   
+    ## # ℹ 34 more rows
+    ## # ℹ abbreviated names: ¹​nyc_consumption_million_gallons_per_day,
+    ## #   ²​per_capita_gallons_per_person_per_day
+
+data coming from BRFSS
+
+<https://chronicdata.cdc.gov/Behavioral-Risk-Factors/Behavioral-Risk-Factors-Selected-Metropolitan-Area/acme-vg9e>
+
+``` r
+brfss_smart2010 = 
+  GET("https://chronicdata.cdc.gov/resource/acme-vg9e.csv",
+      query = list("$limit" = 5000)) |> 
+  content("parsed")
+```
+
+    ## Rows: 5000 Columns: 23
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (16): locationabbr, locationdesc, class, topic, question, response, data...
+    ## dbl  (6): year, sample_size, data_value, confidence_limit_low, confidence_li...
+    ## lgl  (1): locationid
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+brfss_smart2010
+```
+
+    ## # A tibble: 5,000 × 23
+    ##     year locationabbr locationdesc     class topic question response sample_size
+    ##    <dbl> <chr>        <chr>            <chr> <chr> <chr>    <chr>          <dbl>
+    ##  1  2010 AL           AL - Jefferson … Heal… Over… How is … Excelle…          94
+    ##  2  2010 AL           AL - Tuscaloosa… Heal… Over… How is … Excelle…          58
+    ##  3  2010 AL           AL - Mobile Cou… Heal… Over… How is … Excelle…          91
+    ##  4  2010 AL           AL - Tuscaloosa… Heal… Over… How is … Very go…         109
+    ##  5  2010 AL           AL - Mobile Cou… Heal… Over… How is … Very go…         177
+    ##  6  2010 AL           AL - Jefferson … Heal… Over… How is … Very go…         148
+    ##  7  2010 AL           AL - Jefferson … Heal… Over… How is … Good             208
+    ##  8  2010 AL           AL - Tuscaloosa… Heal… Over… How is … Good             171
+    ##  9  2010 AL           AL - Mobile Cou… Heal… Over… How is … Good             224
+    ## 10  2010 AL           AL - Tuscaloosa… Heal… Over… How is … Fair              62
+    ## # ℹ 4,990 more rows
+    ## # ℹ 15 more variables: data_value <dbl>, confidence_limit_low <dbl>,
+    ## #   confidence_limit_high <dbl>, display_order <dbl>, data_value_unit <chr>,
+    ## #   data_value_type <chr>, data_value_footnote_symbol <chr>,
+    ## #   data_value_footnote <chr>, datasource <chr>, classid <chr>, topicid <chr>,
+    ## #   locationid <lgl>, questionid <chr>, respid <chr>, geolocation <chr>
+
+Pokemon API
+
+<https://pokeapi.co/>
+
+``` r
+poke = 
+  GET("http://pokeapi.co/api/v2/pokemon/1") |>
+  content()
+
+poke$name
+```
+
+    ## [1] "bulbasaur"
+
+``` r
+poke$height
+```
+
+    ## [1] 7
+
+``` r
+poke$abilities
+```
+
+    ## [[1]]
+    ## [[1]]$ability
+    ## [[1]]$ability$name
+    ## [1] "overgrow"
+    ## 
+    ## [[1]]$ability$url
+    ## [1] "https://pokeapi.co/api/v2/ability/65/"
+    ## 
+    ## 
+    ## [[1]]$is_hidden
+    ## [1] FALSE
+    ## 
+    ## [[1]]$slot
+    ## [1] 1
+    ## 
+    ## 
+    ## [[2]]
+    ## [[2]]$ability
+    ## [[2]]$ability$name
+    ## [1] "chlorophyll"
+    ## 
+    ## [[2]]$ability$url
+    ## [1] "https://pokeapi.co/api/v2/ability/34/"
+    ## 
+    ## 
+    ## [[2]]$is_hidden
+    ## [1] TRUE
+    ## 
+    ## [[2]]$slot
+    ## [1] 3
