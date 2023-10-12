@@ -44,3 +44,14 @@ table_marj =
 table_marj
 ```
 
+the “note” at the bottom of the table appears in every column in the first row.  need to remove that using `slice(-1)`
+```{r}
+table_marj = 
+  drug_use_html |> 
+  html_table() |> 
+  first() |>
+  slice(-1) 
+
+table_marj
+```
+
