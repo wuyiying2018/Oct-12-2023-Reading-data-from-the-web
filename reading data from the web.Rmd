@@ -55,3 +55,40 @@ table_marj =
 table_marj
 ```
 
+## CSS Selectors
+scrape the data about the Star Wars Movies from the IMDB page. The first step is to get the HTML.
+
+https://www.imdb.com/list/ls070150896/
+```{r}
+swm_html = 
+  read_html("https://www.imdb.com/list/ls070150896/")
+```
+
+```{r}
+swm_html |>
+  html_elements(".lister-item-header a")
+
+title_vec = 
+  swm_html |>
+  html_elements(".lister-item-header a") |>
+  html_text()
+
+title_vec
+
+gross_rev_vec = 
+  swm_html |>
+  html_elements(".text-small:nth-child(7) span:nth-child(5)") |>
+  html_text()
+
+runtime_vec = 
+  swm_html |>
+  html_elements(".runtime") |>
+  html_text()
+
+swm_df = 
+  tibble(
+    title = title_vec,
+    rev = gross_rev_vec,
+    runtime = runtime_vec)
+```
+

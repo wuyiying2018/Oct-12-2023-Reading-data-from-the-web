@@ -416,3 +416,68 @@ table_marj
     ## #   `18-25(2013-2014)` <chr>, `18-25(2014-2015)` <chr>, `18-25(P Value)` <chr>,
     ## #   `26+(2013-2014)` <chr>, `26+(2014-2015)` <chr>, `26+(P Value)` <chr>,
     ## #   `18+(2013-2014)` <chr>, `18+(2014-2015)` <chr>, `18+(P Value)` <chr>
+
+## CSS Selectors
+
+scrape the data about the Star Wars Movies from the IMDB page. The first
+step is to get the HTML.
+
+<https://www.imdb.com/list/ls070150896/>
+
+``` r
+swm_html = 
+  read_html("https://www.imdb.com/list/ls070150896/")
+```
+
+``` r
+swm_html |>
+  html_elements(".lister-item-header a")
+```
+
+    ## {xml_nodeset (9)}
+    ## [1] <a href="/title/tt0120915/?ref_=ttls_li_tt">Star Wars: Episode I - The Ph ...
+    ## [2] <a href="/title/tt0121765/?ref_=ttls_li_tt">Star Wars: Episode II - Attac ...
+    ## [3] <a href="/title/tt0121766/?ref_=ttls_li_tt">Star Wars: Episode III - Reve ...
+    ## [4] <a href="/title/tt0076759/?ref_=ttls_li_tt">Star Wars: Episode IV - A New ...
+    ## [5] <a href="/title/tt0080684/?ref_=ttls_li_tt">Star Wars: Episode V - The Em ...
+    ## [6] <a href="/title/tt0086190/?ref_=ttls_li_tt">Star Wars: Episode VI - Retur ...
+    ## [7] <a href="/title/tt2488496/?ref_=ttls_li_tt">Star Wars: Episode VII - The  ...
+    ## [8] <a href="/title/tt2527336/?ref_=ttls_li_tt">Star Wars: Episode VIII - The ...
+    ## [9] <a href="/title/tt2527338/?ref_=ttls_li_tt">Star Wars: The Rise Of Skywal ...
+
+``` r
+title_vec = 
+  swm_html |>
+  html_elements(".lister-item-header a") |>
+  html_text()
+
+title_vec
+```
+
+    ## [1] "Star Wars: Episode I - The Phantom Menace"     
+    ## [2] "Star Wars: Episode II - Attack of the Clones"  
+    ## [3] "Star Wars: Episode III - Revenge of the Sith"  
+    ## [4] "Star Wars: Episode IV - A New Hope"            
+    ## [5] "Star Wars: Episode V - The Empire Strikes Back"
+    ## [6] "Star Wars: Episode VI - Return of the Jedi"    
+    ## [7] "Star Wars: Episode VII - The Force Awakens"    
+    ## [8] "Star Wars: Episode VIII - The Last Jedi"       
+    ## [9] "Star Wars: The Rise Of Skywalker"
+
+``` r
+gross_rev_vec = 
+  swm_html |>
+  html_elements(".text-small:nth-child(7) span:nth-child(5)") |>
+  html_text()
+
+runtime_vec = 
+  swm_html |>
+  html_elements(".runtime") |>
+  html_text()
+
+swm_df = 
+  tibble(
+    title = title_vec,
+    rev = gross_rev_vec,
+    runtime = runtime_vec)
+```
