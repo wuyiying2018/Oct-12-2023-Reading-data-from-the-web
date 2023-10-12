@@ -429,6 +429,8 @@ swm_html =
   read_html("https://www.imdb.com/list/ls070150896/")
 ```
 
+using extension `SelectorGadget` to get “.lister-item-header a”
+
 ``` r
 swm_html |>
   html_elements(".lister-item-header a")
